@@ -96,7 +96,7 @@ bool delCondCheck(const string& conds, const arr<string>& headers, const string&
     bool isDelForAND = true;
     bool isDelForOR = false;
     for (size_t i = 0; i < condition.size; ++i){
-        for (size_t j = 0; i < condition[i].size; ++j){
+        for (size_t j = 0; j < condition[i].size; ++j){
             currentCondition = splitToArr(condition[i][j], ' ');
             if (currentCondition.size != 3){
                 stringstream serr;
@@ -106,7 +106,12 @@ bool delCondCheck(const string& conds, const arr<string>& headers, const string&
             ColumnName = currentCondition[0];
             oper = currentCondition[1];
             inputValue = currentCondition[2];
-            headerNumber = splittenLine.find(ColumnName);
+            headerNumber = headers.find(ColumnName);
+            if (headerNumber == -1){
+                stringstream serr;
+                serr << "wrong column name";
+                throw runtime_error(serr.str());
+            }
             if (oper == "="){
                 if (splittenLine[headerNumber] == inputValue) {
                     isDelForAND = isDelForAND && true;
@@ -150,7 +155,7 @@ void del(const json& structure, arr<string> inputQuery){
     int currentPk = getCurrPk(path + "/" + query.target); //текущий Pk
     lock(path + "/" + query.target); //блокируем доступ
     if (query.condition == ""){ //нет условия для удаления - удалить всю таблицу
-        for(int i = 0; i <= currentPk / static_cast<int>(structure["tuples_limit"]); ++i){//для всех файлов таблиц
+        for(int i = 0; i < currentPk % static_cast<int>(structure["tuples_limit"]); ++i){//для всех файлов таблиц
             if (i != 0){//в каком мы файле?
                 wayToTable = "/" + query.target + "_" + to_string(i) + ".csv";
                 stream.open(path + wayToTable, std::ios::out); //открываем файл для записи == стираем данные
@@ -163,11 +168,11 @@ void del(const json& structure, arr<string> inputQuery){
                 stream >> headers;
                 stream.close();
                 stream.open(path + wayToTable, std::ios::out); //открываем файл для записи заголовков
-                stream << headers << endl;
+                stream << headers;
                 stream.close();
             }
         }
-        ofstream pkStream (path + "/" + query.target + "_pk_sequence.txt"); //обнуляем pk
+        ofstream pkStream (path + "_pk_sequence.txt"); //обнуляем pk
         pkStream << 1;
         pkStream.close();
         unlock(path + "/" + query.target); //разблокируем доступ
@@ -178,22 +183,28 @@ void del(const json& structure, arr<string> inputQuery){
         fstream bufferStream;
         string gottenLine;
         arr<string> headers = getHeaders(path + "/" + query.target + ".csv");
-        for(int i = 0; i < currentPk % static_cast<int>(structure["tuples_limit"]); ++i){//для всех файлов таблиц
+        for(int i = 0; i <= currentPk / static_cast<int>(structure["tuples_limit"]); ++i){//для всех файлов таблиц
+            bufferStream.open("buffer.csv", ios::out);
             if (i != 0){//в каком мы файле?
                 wayToTable = "/" + query.target + "_" + to_string(i) + ".csv";
             }
             else {
                 wayToTable = "/" + query.target + ".csv";
+                bufferStream << unsplit(headers, ';');
             }
             tableStream.open(path + wayToTable, ios::in);
-            bufferStream.open("buffer.csv", ios::out);
             while (getline(tableStream, gottenLine)){
-                isDel = delCondCheck(query.condition, headers, gottenLine);
+                    try {
+                    isDel = delCondCheck(query.condition, headers, gottenLine);
+                } catch (exception& ex) {
+                    unlock(path + "/" + query.target); //разблокируем доступ
+                    throw runtime_error(ex.what());
+                }
                 if (isDel){
                     bufferStream << endl;
                 }
                 else {
-                    bufferStream << gottenLine;
+                    bufferStream << gottenLine << endl;
                 }
             }
             tableStream.close();
@@ -201,7 +212,7 @@ void del(const json& structure, arr<string> inputQuery){
             tableStream.open(path + wayToTable, ios::out);
             bufferStream.open("buffer.csv", ios::in);
             while (getline(bufferStream, gottenLine)){
-                tableStream << gottenLine;
+                tableStream << gottenLine << endl;
             }
         }
     }

@@ -26,7 +26,7 @@ struct arr {
     void realoc();
     void push_back(const T& value);
     size_t getSize() const;
-    int find(T input);
+    int find(T input) const;
     void erase();
     void print();
     void del(size_t index);

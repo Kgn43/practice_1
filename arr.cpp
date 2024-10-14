@@ -35,7 +35,7 @@ size_t arr<T>::getSize() const  {
 
 
 template<typename T>
-int arr<T>::find(T input) {
+int arr<T>::find(T input) const {
     for (int i = 0; i < this->size; ++i){
         if (this->data[i] == input) return i;
     }

@@ -1,4 +1,8 @@
 tab_1_pk;column_1;column_2;column_3;column_4;
 1;123;456;678;
-2;qwe;asd;zxc;
+
 3;qwe;456;123;
+4;123;qwe;asd;zxc;;
+5;123;qwe;asd;zxc;123;123;123;;
+6;123;qwe;asd;zxc;123;
+7;123;qwe;asd;zxc;
