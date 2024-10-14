@@ -125,8 +125,22 @@ arr<int> connectCondition(const arr<arr<arr<int>>> &arr1){
 }
 
 
+void createIndexes(const arr<arr<arr<string>>>& condition, arr<arr<arr<int>>>& indexes) {
+    // Убедимся, что массивы идентичных размеров
+    size_t size1 = condition.size;
+    indexes.resize(size1);
+    for (size_t i = 0; i < size1; ++i) {
+        size_t size2 = condition[i].size;
+        indexes[i].resize(size2);
+    
+    }
+}
+
+
 arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& condition){
-    arr<arr<arr<int>>> indexes;
+    arr<arr<arr<int>>> indexes(condition.size);
+    createIndexes(condition, indexes);
+    cout << indexes << endl;
     string firstOperand;
     string secondOperand;
     string oper;
@@ -252,6 +266,7 @@ arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& conditio
         }
     }
     arr<int> pass = connectCondition(indexes);
+    cout << pass << endl;
     return pass;
 }
 
@@ -264,7 +279,12 @@ string getValueByIndex(json structure, const string& tableName, const arr<string
         ind = headers.find(columnsName[i]);
         if (ind != -1) break;
     }
-    if (index > 1000){//в каком мы файле?
+    if (ind == -1) {
+        stringstream serr;
+        serr << "there is no such column name in any tabulations";
+        throw runtime_error(serr.str());
+    }
+    if (index >= 1000){//в каком мы файле?
         path += "_" + to_string((index/1000)) + ".csv";
     }
     else {
@@ -284,7 +304,7 @@ string getValueByIndex(json structure, const string& tableName, const arr<string
 
 
 void select(const json& structure, arr<string> inputQuery){
-    selectComm query = toSelectQuery(inputQuery);//получаем имя таблиц, колонки и условия для выборки
+    selectComm query = toSelectQuery(inputQuery);//получаем имена таблиц, колонки и условия для выборки
     for (size_t i = 0; i < query.tables.size; ++i){//для всех таблиц проверяем их существование
         tableCheck(query.tables[i], structure);
     }
@@ -295,13 +315,21 @@ void select(const json& structure, arr<string> inputQuery){
         for (size_t i = 0; i < cond.size; ++i){
             condit.push_back(splitToArr(cond[i], " AND "));
         }
-        arr<arr<arr<string>>> condition; //старший сын
+        arr<arr<arr<string>>> condition(condit.size); //старший сын
+        condition.size = condit.size;
         for (size_t i = 0; i < condit.size; ++i){
             for (size_t j = 0; j < condit[i].size; ++j){
                 condition[i].push_back(splitToArr(condit[i][j], ' '));
             }
         }
-        arr<int> nums = getPassNum(structure, condition);
+        arr<int> nums;
+        //lock()
+        try {
+            nums = getPassNum(structure, condition);
+        } catch (exception& ex) {
+            //unlock(); //разблокируем доступ
+            throw runtime_error(ex.what());
+        }
         string firstWord;
         string secondWord;
         ofstream crossJoin("crossJoin.csv");
@@ -312,6 +340,8 @@ void select(const json& structure, arr<string> inputQuery){
                 crossJoin << firstWord << ';' << secondWord << endl;
             }
         }
+        //unlock(); //разблокируем доступ
+        //unlock(); //разблокируем доступ
         crossJoin.close();
     }
     else{

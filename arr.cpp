@@ -106,7 +106,7 @@ arr<string> splitToArr(const string& input, const string& delimiter){
         if (input[i] == delimiter[0]){
             isDelim = true;
             for (int j = 0; j < delimiter.size(); ++j){
-                if (delimiter[i] != input[i +j]) isDelim = false;
+                if (delimiter[j] != input[i + j]) isDelim = false;
             }
             if (isDelim){
                 output.push_back(word);
@@ -160,4 +160,23 @@ void arr<T>::sort() {
             }
         }
     }
+}
+
+
+
+template <typename T>
+void arr<T>::resize(size_t newSize) {
+    if (newSize > capacity) {
+        T* newData = new T[newSize];
+        for (size_t i = 0; i < size && i < newSize; ++i) {
+            newData[i] = data[i];
+        }
+        for (size_t i = size; i < newSize; ++i) {
+            newData[i] = T();
+        }
+        delete[] data;
+        data = newData;
+        capacity = newSize;
+    }
+    size = newSize;
 }

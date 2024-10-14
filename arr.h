@@ -33,6 +33,7 @@ struct arr {
     void clear();
     void unicAppend(arr<T> inArr);
     void sort();
+    void resize(size_t newSize);
 
 
     // Перегрузка оператора вывода
