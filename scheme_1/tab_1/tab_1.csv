@@ -1,8 +1,5 @@
-tab_1_pk;column_1;column_2;column_3;column_4;
-1;123;456;678;
+tab_1_pk;tab_1.col_1;tab_1.col_2;tab_1.col_3;tab_1.col_4;
 
-3;qwe;456;123;
-4;123;qwe;asd;zxc;;
-5;123;qwe;asd;zxc;123;123;123;;
-6;123;qwe;asd;zxc;123;
-7;123;qwe;asd;zxc;
+1;V_1;V_2;
+1;123;qwe;asd;
+2;zxc;qwe;asd;

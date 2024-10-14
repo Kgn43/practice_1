@@ -2,7 +2,7 @@
   "name": "scheme_1",
   "tuples_limit": 1000,
   "structure": {
-    "tab_1": [ "column_1", "column_2", "column_3", "column_4" ],
-    "tab_2": [ "column_1", "column_2" ]
+    "tab_1": [ "tab_1.col_1", "tab_1.col_2", "tab_1.col_3", "tab_1.col_4" ],
+    "tab_2": [ "tab_2.col_1", "tab_2.col_2" ]
   }
 }

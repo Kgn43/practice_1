@@ -101,7 +101,7 @@ void del(const json& structure, arr<string> inputQuery){
     int currentPk = getCurrPk(path + "/" + query.target); //текущий Pk
     lock(path + "/" + query.target); //блокируем доступ
     if (query.condition == ""){ //нет условия для удаления - удалить всю таблицу
-        for(int i = 0; i < currentPk % static_cast<int>(structure["tuples_limit"]); ++i){//для всех файлов таблиц
+        for(int i = 0; i <= currentPk / static_cast<int>(structure["tuples_limit"]); ++i){//для всех файлов таблиц
             if (i != 0){//в каком мы файле?
                 wayToTable = "/" + query.target + "_" + to_string(i) + ".csv";
                 stream.open(path + wayToTable, std::ios::out); //открываем файл для записи == стираем данные
@@ -114,11 +114,11 @@ void del(const json& structure, arr<string> inputQuery){
                 stream >> headers;
                 stream.close();
                 stream.open(path + wayToTable, std::ios::out); //открываем файл для записи заголовков
-                stream << headers;
+                stream << headers << endl;
                 stream.close();
             }
         }
-        ofstream pkStream (path + "_pk_sequence.txt"); //обнуляем pk
+        ofstream pkStream (path + "/" + query.target  + "_pk_sequence.txt"); //обнуляем pk
         pkStream << 1;
         pkStream.close();
         unlock(path + "/" + query.target); //разблокируем доступ
@@ -136,7 +136,6 @@ void del(const json& structure, arr<string> inputQuery){
             }
             else {
                 wayToTable = "/" + query.target + ".csv";
-                bufferStream << unsplit(headers, ';');
             }
             tableStream.open(path + wayToTable, ios::in);
             while (getline(tableStream, gottenLine)){

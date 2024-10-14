@@ -1,4 +1,1 @@
-tab_1_pk;column_1;column_2;column_3;column_4;
-1;123;456;678;
-
-3;qwe;456;123;
+tab_1_pk;tab_1.col_1;tab_1.col_2;tab_1.col_3;tab_1.col_4;tab_1_pk;tab_1.col_1;tab_1.col_2;tab_1.col_3;tab_1.col_4;

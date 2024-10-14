@@ -69,6 +69,14 @@ string findTableName(json structure, const string& name){
 }
 
 
+bool isItNum(const string& input){
+    for (auto ch : input){
+        if (ch > '9' || ch < '0') return false;
+    }
+    return true;
+}
+
+
 int getIndexFromStr(const string& input){
     string number;
     for (const auto& ch : input){
@@ -79,6 +87,8 @@ int getIndexFromStr(const string& input){
             number += ch;
         }
     }
+    cout << number << endl;
+    if (!isItNum(number)) return 0;
     return stoi(number);
 }
 
@@ -279,27 +289,47 @@ void select(const json& structure, arr<string> inputQuery){
     for (size_t i = 0; i < query.tables.size; ++i){//для всех таблиц проверяем их существование
         tableCheck(query.tables[i], structure);
     }
-    arr<string> cond; //младший сын
-    cond = splitToArr(unsplit(query.condition), " OR ");
-    arr<arr<string>> condit; //средний сын
-    for (size_t i = 0; i < cond.size; ++i){
-        condit.push_back(splitToArr(cond[i], " AND "));
-    }
-    arr<arr<arr<string>>> condition; //старший сын
-    for (size_t i = 0; i < condit.size; ++i){
-        for (size_t j = 0; j < condit[i].size; ++j){
-            condit.push_back(splitToArr(condit[i][j], ' '));
+    if (query.condition.size != 0){
+        arr<string> cond; //младший сын
+        cond = splitToArr(unsplit(query.condition), " OR ");
+        arr<arr<string>> condit; //средний сын
+        for (size_t i = 0; i < cond.size; ++i){
+            condit.push_back(splitToArr(cond[i], " AND "));
         }
-    }
-    arr<int> nums = getPassNum(structure, condition);
-    string firstWord;
-    string secondWord;
-    ofstream crossJoin("crossJoin.csv");
-    for (size_t i = 0; i < nums.size; ++i){
-        firstWord = getValueByIndex(structure, query.tables[0], query.columns, nums[i]);
-        for (size_t j = 0; j < nums.size; ++j){
-            secondWord = getValueByIndex(structure, query.tables[1], query.columns, nums[j]);
-            crossJoin << firstWord << ';' << secondWord << endl;
+        arr<arr<arr<string>>> condition; //старший сын
+        for (size_t i = 0; i < condit.size; ++i){
+            for (size_t j = 0; j < condit[i].size; ++j){
+                condit.push_back(splitToArr(condit[i][j], ' '));
+            }
         }
+        arr<int> nums = getPassNum(structure, condition);
+        string firstWord;
+        string secondWord;
+        ofstream crossJoin("crossJoin.csv");
+        for (size_t i = 0; i < nums.size; ++i){
+            firstWord = getValueByIndex(structure, query.tables[0], query.columns, nums[i]);
+            for (size_t j = 0; j < nums.size; ++j){
+                secondWord = getValueByIndex(structure, query.tables[1], query.columns, nums[j]);
+                crossJoin << firstWord << ';' << secondWord << endl;
+            }
+        }
+        crossJoin.close();
+    }
+    else{
+        string firstWord;
+        string secondWord;
+        ofstream crossJoin("crossJoin.csv");
+        string path1 = static_cast<string>(structure["name"]) + "/" + query.tables[0] + "/" + query.tables[0];
+        string path2 = static_cast<string>(structure["name"]) + "/" + query.tables[1] + "/" + query.tables[1];
+        int currPk1 = getCurrPk(path1);
+        int currPk2 = getCurrPk(path2);
+        for (size_t i = 1; i < currPk1; ++i){
+            firstWord = getValueByIndex(structure, query.tables[0], query.columns, i);
+            for (size_t j = 1; j < currPk2; ++j){
+                secondWord = getValueByIndex(structure, query.tables[1], query.columns, j);
+                crossJoin << firstWord << ';' << secondWord << endl;
+            }
+        }
+        crossJoin.close();
     }
 }

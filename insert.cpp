@@ -3,7 +3,7 @@
 
 void sizeCheck(int insertionSize, const string& tableName, const json& structure){
     int tableStrLen = static_cast<int>(structure["structure"][tableName].size());
-    if (tableStrLen <= insertionSize){// <= из-за Pk
+    if (tableStrLen < insertionSize){// < из-за Pk
         stringstream serr;
         serr << "wrong command to many values";
         throw runtime_error(serr.str());
@@ -45,10 +45,17 @@ void insert(const json& structure, arr<string> inputQuery){
     for (size_t i = 0; i < query.target.size; ++i){//вставка во все таблицы
         tableCheck(query.target[i], structure);//существует ли таблица?
         sizeCheck(static_cast<int>(query.data.size), query.target[i], structure); //не слишком ли много колонок для этой таблицы?
+        int tableStrLen = static_cast<int>(structure["structure"][query.target[i]].size());
         string values = unsplit(query.data, ';');
         string path = static_cast<string>(structure["name"]) + "/" + query.target[i]; //директория таблицы
         int currentPk = getCurrPk(path + "/" + query.target[i]); //текущий Pk
         values = to_string(currentPk) + ";" + values;//добавили pk к вводу
+        if (tableStrLen >= query.data.size){
+            while (tableStrLen != query.data.size){
+                tableStrLen--;
+                values += ";";
+            }
+        }
         string wayToTable;
         if (currentPk >= 1000){//в какой файл записать?
             wayToTable = "/" + query.target[i] + "_" + to_string(currentPk % 1000) + ".csv";
@@ -62,7 +69,10 @@ void insert(const json& structure, arr<string> inputQuery){
         lock(path + "/" + query.target[i]); //блокируем доступ
         ofstream output; // поток в файл
         output.open(path + wayToTable, std::ios::app);  // открываем файл для записи в конец
-        output << values; // сама запись
+        output << values << endl; // сама запись
+        output.close();
+        output.open(path + "/" + query.target[i] + "_pk_sequence.txt");
+        output << ++currentPk;
         output.close();
         unlock(path + "/" + query.target[i]);
     }
