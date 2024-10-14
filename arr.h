@@ -1,5 +1,5 @@
-#ifndef ARR_H_INCLUDED
-#define ARR_H_INCLUDED
+#ifndef ARR_H
+#define ARR_H
 
 #include <iostream>
 #include <sstream>
@@ -77,4 +77,4 @@ arr<string> splitToArr(const string &input, char delimiter = ' ');
 arr<string> splitToArr(const string& input, const string& delimiter);
 string unsplit(const arr<string>& array, char delimiter = ' ');
 
-#endif // ARR_H_INCLUDED
+#endif // ARR_H

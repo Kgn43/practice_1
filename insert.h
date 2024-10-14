@@ -4,6 +4,7 @@
 #include <string>
 #include "nlohmann/json.hpp"
 #include "arr.h"
+#include "common.h"
 
 using namespace std;
 using json = nlohmann::json;

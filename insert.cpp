@@ -1,5 +1,4 @@
 #include "insert.h"
-#include "common.h"
 
 
 void sizeCheck(int insertionSize, const string& tableName, const json& structure){

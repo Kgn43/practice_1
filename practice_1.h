@@ -5,6 +5,7 @@
 #include "arr.h"
 #include "common.h"
 #include "insert.h"
+#include "delete.h"
 
 
 #include <nlohmann/json.hpp>
