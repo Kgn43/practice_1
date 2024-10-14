@@ -28,7 +28,7 @@ selectComm toSelectQuery(arr<string> query){
     }
     size_t wherePlc = query.size;
     for (size_t i = 0; i < query.size; ++i){
-        if (query[i] == "from") fromPlc = i;
+        if (query[i] == "where") wherePlc = i;
     }
     selectComm output;
     for (size_t i = 1; i < fromPlc; ++i){//записать условие
@@ -87,7 +87,6 @@ int getIndexFromStr(const string& input){
             number += ch;
         }
     }
-    cout << number << endl;
     if (!isItNum(number)) return 0;
     return stoi(number);
 }
@@ -165,9 +164,9 @@ arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& conditio
                     throw runtime_error(serr.str());
                 }
                 else {
-                    table1Name = findTableName(structure, firstOperand);//находим имя таблицы
+                    table1Name = findTableName(firstOperand, structure);//находим имя таблицы
                     tableCheck(structure, table1Name);//проверяем на случай отсутствия
-                    table2Name = findTableName(structure, secondOperand);//находим имя таблицы
+                    table2Name = findTableName(secondOperand, structure);//находим имя таблицы
                     tableCheck(structure, table2Name);//проверяем на случай отсутствия
                     firstPath = static_cast<string>(structure["name"]) + "/" + table1Name + "/" + table1Name;// уже не директории!!
                     secondPath = static_cast<string>(structure["name"]) + "/" + table2Name + "/" + table2Name;
@@ -214,7 +213,7 @@ arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& conditio
             }
             else {
                 table1Name = findTableName(structure, firstOperand);//находим имя таблицы
-                tableCheck(structure, table1Name);//проверяем на случай отсутствия
+                tableCheck(table1Name, structure);//проверяем на случай отсутствия
                 firstPath = static_cast<string>(structure["name"]) + "/" + table1Name + "/" + table1Name;// уже не директория!!
                 firstCurrentPk = getCurrPk(firstPath); //текущий Pk1
                 //для всех файлов таблиц
@@ -299,7 +298,7 @@ void select(const json& structure, arr<string> inputQuery){
         arr<arr<arr<string>>> condition; //старший сын
         for (size_t i = 0; i < condit.size; ++i){
             for (size_t j = 0; j < condit[i].size; ++j){
-                condit.push_back(splitToArr(condit[i][j], ' '));
+                condition[i].push_back(splitToArr(condit[i][j], ' '));
             }
         }
         arr<int> nums = getPassNum(structure, condition);
