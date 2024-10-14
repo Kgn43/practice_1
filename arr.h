@@ -31,6 +31,8 @@ struct arr {
     void print();
     void del(size_t index);
     void clear();
+    void unicAppend(arr<T> inArr);
+    void sort();
 
 
     // Перегрузка оператора вывода
@@ -56,11 +58,21 @@ struct arr {
 
 
     bool operator==(const arr<T>& other) const {
-        if (size != other.size) return false; // сравнить размеры
+        if (size != other.size) return false; // Сначала сравнить размеры
         for (size_t i = 0; i < size; ++i) {
             if (!(data[i] == other.data[i])) {
-                return false; 
+                return false; // Используем оператор == для сравнения элементов
             }
+        }
+        return true; // Все элементы равны
+    }
+
+
+    bool operator>(const arr<T>& other) const {
+        for (size_t i = 0; i < this->size; ++i){
+
+            if (this->data[i] > other[i]) { }
+            else return false;
         }
         return true; // Все элементы равны
     }
@@ -69,8 +81,11 @@ struct arr {
 
 
 template struct arr<int>;
+template struct arr<arr<int>>;
+template struct arr<arr<arr<int>>>;
 template struct arr<string>;
 template struct arr<arr<string>>;
+template struct arr<arr<arr<string>>>;
 
 
 arr<string> splitToArr(const string &input, char delimiter = ' ');

@@ -16,11 +16,7 @@ struct delComm{
 
 
 delComm toDelQuery(arr<string> query);
-
-arr<string> getHeaders(const string& name);
-
 bool delCondCheck(const string& conds, const arr<string>& headers, const string& line);
-
 void del(const json& structure, arr<string> inputQuery);
 
 

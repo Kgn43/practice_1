@@ -62,10 +62,7 @@ void insert(const json& structure, arr<string> inputQuery){
         lock(path + "/" + query.target[i]); //блокируем доступ
         ofstream output; // поток в файл
         output.open(path + wayToTable, std::ios::app);  // открываем файл для записи в конец
-        output << values << endl; // сама запись
-        output.close();
-        output.open(path + "/" + query.target[i] + "_pk_sequence.txt");
-        output << ++currentPk;
+        output << values; // сама запись
         output.close();
         unlock(path + "/" + query.target[i]);
     }

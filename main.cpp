@@ -1,12 +1,6 @@
 #include "practice_1.h"
 
 
-int getPkFormStr(const string& input){
-    arr<string> splited = splitToArr(input, ';');
-    return stoi(splited[0]);
-}
-
-
 int main() {
     string strcrt = "strktr.json";
     json structureJSON;
@@ -50,12 +44,10 @@ int main() {
                     del(structureJSON, query);
                     break;
                 case Select:
-
+                    select(structureJSON, query);
                     break;
                 case Wrong:
-                    system("cls");
-                    cout << "Wrong syntax" << endl;
-                    break;
+                    throw runtime_error("Wrong syntax");
             }
         }
         catch(exception& ex) {
@@ -64,6 +56,4 @@ int main() {
         cout << "Enter command" << endl;
     }
     return 0;
-
-
 }

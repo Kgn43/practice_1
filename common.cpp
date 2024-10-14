@@ -42,3 +42,13 @@ void tableCheck(const string& tableName, const json& structure){
         throw runtime_error(serr.str());
     }
 }
+
+
+arr<string> getHeaders(const string& name){
+    string headers; //нужно сохранить названия колонок
+    ifstream stream;
+    stream.open(name, std::ios::in);  // открываем файл для считывания заголовков
+    stream >> headers;
+    stream.close();
+    return splitToArr(headers, ';');
+}

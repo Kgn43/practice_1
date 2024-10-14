@@ -134,3 +134,30 @@ string unsplit(const arr<string>& array, char delimiter){
     }
     return output;
 }
+
+
+template<typename T>
+void arr<T>::unicAppend(arr<T> inArr) {
+    bool isAppend;
+    for (size_t i = 0; i < inArr.size; i++){
+        isAppend = true;
+        for(size_t j = 0; j < this->size; j++){
+            if (inArr[i] == inArr[j]) isAppend = false;
+        }
+        if (isAppend){
+            this->push_back(inArr[i]);
+        }
+    }
+}
+
+
+template<typename T>
+void arr<T>::sort() {
+    for (size_t i = 0; i < size - 1; ++i) {
+        for (size_t j = 0; j < size - 1 - i; ++j) {
+            if (data[j] > data[j + 1]) {
+                std::swap(data[j], data[j + 1]); // Меняем местами
+            }
+        }
+    }
+}

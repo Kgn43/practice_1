@@ -33,16 +33,6 @@ delComm toDelQuery(arr<string> query){
 }
 
 
-arr<string> getHeaders(const string& name){
-    string headers; //нужно сохранить названия колонок
-    ifstream stream;
-    stream.open(name, std::ios::in);  // открываем файл для считывания заголовков
-    stream >> headers;
-    stream.close();
-    return splitToArr(headers, ';');
-}
-
-
 bool delCondCheck(const string& conds, const arr<string>& headers, const string& line){
     arr<string> cond = splitToArr(conds, " OR ");
     arr<arr<string>> condition;

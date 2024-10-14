@@ -1,11 +1,12 @@
-#ifndef DELETETHIS_PRACTICE_1_H
-#define DELETETHIS_PRACTICE_1_H
+#ifndef PRACTICE_1_H
+#define PRACTICE_1_H
 
 #include "makeStructure.h"
 #include "arr.h"
 #include "common.h"
 #include "insert.h"
 #include "delete.h"
+#include "select.h"
 
 
 #include <nlohmann/json.hpp>
@@ -35,4 +36,4 @@ commands commandRequest(const std::string &input){
     return commands::Wrong;
 }
 
-#endif //DELETETHIS_PRACTICE_1_H
+#endif //PRACTICE_1_H
