@@ -139,6 +139,10 @@ void del(const json& structure, arr<string> inputQuery){
             }
             tableStream.open(path + wayToTable, ios::in);
             while (getline(tableStream, gottenLine)){
+                if (gottenLine == "" || gottenLine == " "){
+                    bufferStream << endl;
+                    continue;
+                }
                 try {
                     isDel = delCondCheck(query.condition, headers, gottenLine);
                 } catch (exception& ex) {
