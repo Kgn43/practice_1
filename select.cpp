@@ -239,6 +239,8 @@ arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& conditio
                         secondHeaderNumber = secondTableHeaders.find(secondOperand);
                         //считываем строки пока можем
                         while (getline(firstStream, firstGottenLine) && getline(secondStream, secondGottenLine)){
+                            if (firstGottenLine == "" || firstGottenLine == " ") continue;
+                            if (secondGottenLine == "" || secondGottenLine == " ") continue;
                             if (oper == "="){
                                 //разбиваем строку для обращения по индексу колонки
                                 firstSplitedLine = splitToArr(firstGottenLine, ';');
@@ -281,6 +283,7 @@ arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& conditio
                     firstHeaderNumber = firstTableHeaders.find(firstOperand);
                     //считываем строки пока можем
                     while (getline(firstStream, firstGottenLine)){
+                        if (firstGottenLine == "" || firstGottenLine == " ") continue;
                         if (oper == "="){
                             //разбиваем строку для обращения по индексу колонки
                             firstSplitedLine = splitToArr(firstGottenLine, ';');
@@ -376,10 +379,10 @@ void select(const json& structure, arr<string> inputQuery){
         ofstream crossJoin("crossJoin.csv");
         for (size_t i = 0; i < nums.size; ++i){
             firstWord = getValueByIndex(structure, query.tables[0], query.columns, nums[i]);
-            if (firstWord == "") continue;
+            if (firstWord == "" ||firstWord == " ") continue;
             for (size_t j = 0; j < nums.size; ++j){
                 secondWord = getValueByIndex(structure, query.tables[1], query.columns, nums[j]);
-                if (secondWord == "") continue;
+                if (secondWord == "" || secondWord == " ") continue;
                 crossJoin << firstWord << ';' << secondWord << endl;
             }
         }
@@ -398,10 +401,10 @@ void select(const json& structure, arr<string> inputQuery){
         int currPk2 = getCurrPk(path2);
         for (size_t i = 1; i < currPk1; ++i){
             firstWord = getValueByIndex(structure, query.tables[0], query.columns, i);
-            if (firstWord == "") continue;
+            if (firstWord == "" ||firstWord == " ") continue;
             for (size_t j = 1; j < currPk2; ++j){
                 secondWord = getValueByIndex(structure, query.tables[1], query.columns, j);
-                if (secondWord == "") continue;
+                if (secondWord == ""||firstWord == " ")  continue;
                 crossJoin << firstWord << ';' << secondWord << endl;
             }
         }
