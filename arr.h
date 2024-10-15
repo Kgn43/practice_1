@@ -31,7 +31,6 @@ struct arr {
     void print();
     void del(size_t index);
     void clear();
-    void unicAppend(arr<T> inArr);
     void sort();
     void resize(size_t newSize);
 

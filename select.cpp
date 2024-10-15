@@ -106,6 +106,41 @@ arr<int> addIfNotUnic(arr<int> arr1, arr<int> arr2){
 }
 
 
+
+arr<int> unicAppend(arr<int> inArr1, arr<int> inArr2) {
+    bool isAppend;
+    arr<int> outArr;
+    if (inArr1.size != 0){
+        outArr.push_back(inArr1[0]);
+    }
+    else if (inArr2.size != 0){
+        outArr.push_back(inArr2[0]);
+    }
+    else {
+        return outArr;
+    }
+    for (size_t i = 0; i < inArr1.size; i++){
+        isAppend = true;
+        for (size_t j = 0; j < outArr.size; j++){
+            if (outArr[j] == inArr1[i]) isAppend = false;
+        }
+        if (isAppend){
+            outArr.push_back(inArr1[i]);
+        }
+    }
+    for (size_t i = 0; i < inArr2.size; i++){
+        isAppend = true;
+        for (size_t j = 0; j < outArr.size; j++){
+            if (outArr[j] == inArr2[i]) isAppend = false;
+        }
+        if (isAppend){
+            outArr.push_back(inArr2[i]);
+        }
+    }
+    return outArr;
+}
+
+
 arr<int> connectCondition(const arr<arr<arr<int>>> &arr1){
     arr<int> outputArr;
     arr<int> andArr;
@@ -118,7 +153,7 @@ arr<int> connectCondition(const arr<arr<arr<int>>> &arr1){
                 andArr = addIfNotUnic(andArr, arr1[i][j]);
             }
         }
-        outputArr.unicAppend(andArr);
+        outputArr = unicAppend(outputArr, andArr);
         outputArr.sort();
     }
     return outputArr;
@@ -140,7 +175,6 @@ void createIndexes(const arr<arr<arr<string>>>& condition, arr<arr<arr<int>>>& i
 arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& condition){
     arr<arr<arr<int>>> indexes(condition.size);
     createIndexes(condition, indexes);
-    cout << indexes << endl;
     string firstOperand;
     string secondOperand;
     string oper;
@@ -178,10 +212,10 @@ arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& conditio
                     throw runtime_error(serr.str());
                 }
                 else {
-                    table1Name = findTableName(firstOperand, structure);//находим имя таблицы
-                    tableCheck(structure, table1Name);//проверяем на случай отсутствия
-                    table2Name = findTableName(secondOperand, structure);//находим имя таблицы
-                    tableCheck(structure, table2Name);//проверяем на случай отсутствия
+                    table1Name = findTableName(structure, firstOperand);//находим имя таблицы
+                    tableCheck(table1Name, structure);//проверяем на случай отсутствия
+                    table2Name = findTableName(structure, secondOperand);//находим имя таблицы
+                    tableCheck(table2Name, structure);//проверяем на случай отсутствия
                     firstPath = static_cast<string>(structure["name"]) + "/" + table1Name + "/" + table1Name;// уже не директории!!
                     secondPath = static_cast<string>(structure["name"]) + "/" + table2Name + "/" + table2Name;
                     firstCurrentPk = getCurrPk(firstPath); //текущий Pk1
@@ -202,13 +236,14 @@ arr<int> getPassNum(const json& structure, const arr<arr<arr<string>>>& conditio
                         secondTableHeaders = getHeaders(secondPath + wayToTable);
                         //находим в этих заголовках индекс колонки из проверяемого условия
                         firstHeaderNumber = firstTableHeaders.find(firstOperand);
-                        secondHeaderNumber = secondTableHeaders.find(firstOperand);
+                        secondHeaderNumber = secondTableHeaders.find(secondOperand);
                         //считываем строки пока можем
                         while (getline(firstStream, firstGottenLine) && getline(secondStream, secondGottenLine)){
                             if (oper == "="){
                                 //разбиваем строку для обращения по индексу колонки
                                 firstSplitedLine = splitToArr(firstGottenLine, ';');
                                 secondSplitedLine = splitToArr(secondGottenLine, ';');
+                                cout << firstSplitedLine << " " << firstHeaderNumber << endl << secondSplitedLine << secondHeaderNumber << endl;
                                 //проверка ОДНОГО условия
                                 if (firstSplitedLine[firstHeaderNumber] == secondSplitedLine[secondHeaderNumber]) {
                                     indexes[i][j].push_back(getIndexFromStr(firstGottenLine));

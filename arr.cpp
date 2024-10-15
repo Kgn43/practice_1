@@ -102,15 +102,17 @@ arr<string> splitToArr(const string& input, const string& delimiter){
     string word;
     arr<string> output;
     bool isDelim;
+    int j;
     for (int i = 0; i < input.size(); ++i){
         if (input[i] == delimiter[0]){
             isDelim = true;
-            for (int j = 0; j < delimiter.size(); ++j){
+            for (j = 0; j < delimiter.size(); ++j){
                 if (delimiter[j] != input[i + j]) isDelim = false;
             }
             if (isDelim){
                 output.push_back(word);
                 word = "";
+                i += j - 1;
             }
             else {
                 word += input[i];
@@ -133,21 +135,6 @@ string unsplit(const arr<string>& array, char delimiter){
         output += array[i] + delimiter;
     }
     return output;
-}
-
-
-template<typename T>
-void arr<T>::unicAppend(arr<T> inArr) {
-    bool isAppend;
-    for (size_t i = 0; i < inArr.size; i++){
-        isAppend = true;
-        for(size_t j = 0; j < this->size; j++){
-            if (inArr[i] == inArr[j]) isAppend = false;
-        }
-        if (isAppend){
-            this->push_back(inArr[i]);
-        }
-    }
 }
 
 
