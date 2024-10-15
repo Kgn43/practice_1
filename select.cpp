@@ -358,11 +358,15 @@ void select(const json& structure, arr<string> inputQuery){
             }
         }
         arr<int> nums;
-        //lock()
+        for (size_t i = 0; i < query.tables.size; ++i){
+            lock(static_cast<string>(structure["name"]) + "/" + query.tables[i] + "/" + query.tables[i]);
+        }
         try {
             nums = getPassNum(structure, condition);
         } catch (exception& ex) {
-            //unlock(); //разблокируем доступ
+            for (size_t i = 0; i < query.tables.size; ++i){
+                unlock(static_cast<string>(structure["name"]) + "/" + query.tables[i] + "/" + query.tables[i]);
+            }
             throw runtime_error(ex.what());
         }
         string firstWord;
@@ -375,8 +379,9 @@ void select(const json& structure, arr<string> inputQuery){
                 crossJoin << firstWord << ';' << secondWord << endl;
             }
         }
-        //unlock(); //разблокируем доступ
-        //unlock(); //разблокируем доступ
+        for (size_t i = 0; i < query.tables.size; ++i){
+            unlock(static_cast<string>(structure["name"]) + "/" + query.tables[i] + "/" + query.tables[i]);
+        }
         crossJoin.close();
     }
     else{
